@@ -69,6 +69,12 @@ class DocumentPage(models.Model):
             )
         return content_parsed
 
+    def _inverse_content(self):
+        for rec in self:
+            if rec.type == "content":
+                rec.content = rec.get_content()
+        return super()._inverse_content()
+
     def _resolve_reference(self, code):
         doc = self._get_document(code)
         if self.env.context.get("raw_reference", False):
@@ -85,7 +91,7 @@ class DocumentPage(models.Model):
         )
 
     def get_raw_content(self):
-        return Markup(self.with_context(raw_reference=True).get_content())
+        return str(self.with_context(raw_reference=True).get_content())
 
     @api.model_create_multi
     def create(self, vals_list):
