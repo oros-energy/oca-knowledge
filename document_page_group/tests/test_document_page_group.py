@@ -7,8 +7,8 @@ from odoo.addons.base.tests.common import BaseCommon
 
 
 class TestDocumentPageGroup(BaseCommon):
-    # Odoo 20: BaseCommon runs each test as a plain internal user. These
-    # tests expect the superuser environment of 19.0.
+    # The tests create and edit pages, which the default test user of
+    # BaseCommon is not allowed to do.
     _test_user_groups = ()
 
     @classmethod
