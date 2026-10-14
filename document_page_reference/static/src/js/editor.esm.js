@@ -1,6 +1,6 @@
 import {HtmlField, htmlField} from "@web/views/fields/html/html_field";
 import {registry} from "@web/core/registry";
-import {useExternalListener} from "@odoo/owl";
+import {useListener} from "@odoo/owl";
 import {useService} from "@web/core/utils/hooks";
 
 class DocumentPageReferenceField extends HtmlField {
@@ -9,8 +9,9 @@ class DocumentPageReferenceField extends HtmlField {
         this.orm = useService("orm");
         this.action = useService("action");
         // Delegate: one listener that resolves the link at click time, so it
-        // survives the html field re-rendering and is auto-removed on unmount.
-        useExternalListener(document, "click", (event) => {
+        // survives the html field re-rendering and is removed with the field.
+        // Owl 3 (Odoo 20) replaced useExternalListener with useListener.
+        useListener(document, "click", (event) => {
             const link = event.target.closest?.(".oe_direct_line");
             if (link) {
                 this._onClickDirectLink(event, link);

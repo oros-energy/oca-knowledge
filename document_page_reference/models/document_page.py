@@ -15,18 +15,28 @@ class DocumentPage(models.Model):
     _inherit = "document.page"
     _description = "Document Page"
 
+    # A copy must not take over the unique reference, otherwise copying a page
+    # fails (test_page_copy of document_page). create() derives a new one from
+    # the name of the copy.
     reference = fields.Char(
-        help="Used to find the document, it can contain letters, numbers and _"
+        help="Used to find the document, it can contain letters, numbers and _",
+        copy=False,
     )
     content_parsed = fields.Html(
         "Parsed Content", compute="_compute_content_parsed", sanitize=False, store=True
     )
 
-    def get_formview_action(self, access_uid=None):
-        res = super().get_formview_action(access_uid)
+    def get_record_default_action(self, access_uid=None):
+        res = super().get_record_default_action(access_uid)
         view_id = self.env.ref("document_page.view_wiki_form").id
         res["views"] = [(view_id, "form")]
         return res
+
+    def get_formview_action(self, access_uid=None):
+        # Odoo 20 renamed BaseModel.get_formview_action() to
+        # get_record_default_action(). The reference links still call the old
+        # name over RPC, so it stays as an alias.
+        return self.get_record_default_action(access_uid)
 
     @api.depends("content")
     def _compute_content_parsed(self):
