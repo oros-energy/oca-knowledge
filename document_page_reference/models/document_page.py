@@ -15,9 +15,7 @@ class DocumentPage(models.Model):
     _inherit = "document.page"
     _description = "Document Page"
 
-    # A copy must not take over the unique reference, otherwise copying a page
-    # fails (test_page_copy of document_page). create() derives a new one from
-    # the name of the copy.
+    # References are unique, create() derives a new one for the copy.
     reference = fields.Char(
         help="Used to find the document, it can contain letters, numbers and _",
         copy=False,
@@ -33,9 +31,7 @@ class DocumentPage(models.Model):
         return res
 
     def get_formview_action(self, access_uid=None):
-        # Odoo 20 renamed BaseModel.get_formview_action() to
-        # get_record_default_action(). The reference links still call the old
-        # name over RPC, so it stays as an alias.
+        # Called by the reference links of the widget.
         return self.get_record_default_action(access_uid)
 
     @api.depends("content")

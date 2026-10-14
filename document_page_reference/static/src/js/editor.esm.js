@@ -10,7 +10,6 @@ class DocumentPageReferenceField extends HtmlField {
         this.action = useService("action");
         // Delegate: one listener that resolves the link at click time, so it
         // survives the html field re-rendering and is removed with the field.
-        // Owl 3 (Odoo 20) replaced useExternalListener with useListener.
         useListener(document, "click", (event) => {
             const link = event.target.closest?.(".oe_direct_line");
             if (link) {
