@@ -155,7 +155,7 @@
                                 <field
                                     name="content_uid"
                                     widget="image"
-                                    options="{'preview_image': 'image_small'}"
+                                    options="{'preview_image': 'avatar_128'}"
                                     t-att-alt="record.content_uid.value"
                                     style="margin-right:5px; width:24px; height:24px;"
                                 />
