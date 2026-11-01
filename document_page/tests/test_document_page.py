@@ -70,6 +70,17 @@ class TestDocumentPage(common.TransactionCase):
         page.content = "<div>New content</div>"
         self.assertIsNotNone(page.history_ids[0].diff)
 
+    def test_page_history_diff_in_onchange(self):
+        page = self.page_obj.create(
+            {"name": "Test Page 4", "content": "<div>Test content</div>"}
+        )
+        page.content = "<div>New content</div>"
+        history = page.history_head
+        new_page = page.new(origin=page)
+        new_history = history.new({"page_id": new_page.id}, origin=history)
+        with self.assertNoLogs("odoo.domains", "WARNING"):
+            self.assertEqual(new_history.diff, history.diff)
+
     def test_page_link(self):
         page = self.page_obj.create(
             {"name": "Test Page 3", "content": "<div>Test content</div>"}

@@ -36,15 +36,17 @@ class DocumentPageHistory(models.Model):
         """Shows a diff between this version and the previous version"""
         history = self.env["document.page.history"]
         for rec in self:
+            # In a form onchange the history and its page are new records,
+            # which a domain cannot use, so the saved records are compared.
             prev = history.search(
                 [
-                    ("page_id", "=", rec.page_id.id),
+                    ("page_id", "=", rec.page_id._origin.id),
                     ("create_date", "<", rec.create_date),
                 ],
                 limit=1,
                 order="create_date DESC",
             )
-            rec.diff = self._get_diff(prev.id, rec.id)
+            rec.diff = self._get_diff(prev.id, rec._origin.id)
 
     def _get_diff(self, v1, v2):
         text1 = v1 and self.browse(v1).content or ""
